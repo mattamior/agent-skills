@@ -1,36 +1,49 @@
-# Brand Design Workflow
+# Agent Skills
 
-An Apache-2.0 licensed Codex skill for moving from a brand concept to an approved, production-ready identity system.
+This is `mattamior`'s collection for developing and maintaining reusable Agent Skills for ChatGPT and Codex. Each skill lives independently under `skills/<skill-name>/` and uses `SKILL.md` as its entry point.
 
-## Included skill
+## Skills
 
-[`brand-design-system`](brand-design-system/SKILL.md) supports:
-
-- exploring distinct, vector-friendly logo directions;
-- preserving an approved master through refinement and asset generation;
-- producing only the SVG, PNG, favicon, PWA, and social assets a delivery needs;
-- optionally integrating approved assets into a website; and
-- validating rendered transparency, proportions, small-size readability, and delivered favicon/manifest paths.
-
-It deliberately does not prescribe a visual style, palette, language, or brand name. Similarity observations are not trademark clearance or legal advice.
+| Skill | Purpose |
+| --- | --- |
+| [`brand-design-system`](skills/brand-design-system/SKILL.md) | Move from brand exploration, process records, and master approval to production assets, web integration, and visual acceptance. |
 
 ## Install
 
-Copy or symlink [`brand-design-system`](brand-design-system) into your Codex skills directory:
+Codex discovers user-level skills from `$HOME/.agents/skills`. This repository uses symbolic links so installed skills stay aligned with their source:
 
 ```bash
-git clone https://github.com/mattamior/brand-design-workflow.git
-ln -s "$(pwd)/brand-design-workflow/brand-design-system" "$CODEX_HOME/skills/brand-design-system"
+git clone https://github.com/mattamior/agent-skills.git
+cd agent-skills
+./scripts/link-skills.sh --check brand-design-system
+./scripts/link-skills.sh brand-design-system
 ```
 
-If `CODEX_HOME` is unset, use `~/.codex/skills/brand-design-system`.
+With no skill arguments, the script processes every skill in the repository. Use `--target DIR` for another installation directory. It never overwrites an existing file or a symbolic link that points elsewhere.
 
 ## Use
 
-Invoke `$brand-design-system` explicitly, or let Codex select it for brand identity, logo-system, production brand-asset, or brand web-integration work.
+Invoke `$brand-design-system` explicitly, or let ChatGPT or Codex select it for brand identity, logo-system, production brand-asset, or brand implementation review work.
 
-Provide the brand name, audience, intended surfaces, existing assets or approved design, and any required language, palette, or delivery constraints. The skill asks for decisions only when they materially change the resulting identity or asset pack.
+## Develop and validate
 
-## Scope boundary
+When adding or changing a skill:
 
-Production assets are based on an approved design master. Image generation is useful during concept exploration, but editable SVG/vector construction is preferred for final logos. Legal clearance remains a separate professional process.
+1. Put it in `skills/<skill-name>/` and keep the directory name equal to the `name` in `SKILL.md`.
+2. Keep shared workflow and essential constraints in `SKILL.md`; put conditional detail in `references/` and output templates in `assets/`.
+3. Keep `agents/openai.yaml` aligned and include `$<skill-name>` explicitly in its default prompt.
+4. Run repository validation:
+
+```bash
+./scripts/validate-skills.py
+```
+
+GitHub Actions also validates specification compatibility with a pinned Agent Skills `skills-ref` revision and exercises the install script's check, install, idempotency, and collision-rejection paths.
+
+For material routing changes, review the scenarios in [`tests/brand-design-system-trigger-cases.md`](tests/brand-design-system-trigger-cases.md).
+
+Keep formal user documentation synchronized between `README.zh.md` and `README.en.md`. The initial release distributes standalone skills only; it does not package a plugin or publish a GitHub Release.
+
+## License
+
+[Apache License 2.0](LICENSE)
