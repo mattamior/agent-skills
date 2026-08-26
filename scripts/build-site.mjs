@@ -43,7 +43,7 @@ await writeFile(path.join(distDir, "skills.json"), `${JSON.stringify({ generated
 await writeFile(path.join(distDir, "health.json"), `${JSON.stringify({
   status: "ok",
   skills: skills.length,
-  revision: process.env.GITHUB_SHA || "development"
+  revision: process.env.DEPLOY_REVISION || process.env.GITHUB_SHA || "development"
 }, null, 2)}\n`);
 
 console.log(`Built Agent Skills gallery with ${skills.length} skill(s).`);
