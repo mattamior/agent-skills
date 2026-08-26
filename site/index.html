@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A browsable collection of reusable Agent Skills for ChatGPT and Codex.">
+  <title>Agent Skills — mattamior</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="wordmark" href="/" aria-label="Agent Skills home">Agent Skills<span>.</span></a>
+    <nav aria-label="Primary navigation">
+      <a href="https://github.com/mattamior/agent-skills">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">mattamior / agent-skills</p>
+      <h1>Reusable skills for<br><em>serious agent work.</em></h1>
+      <p class="lede">A repository-first collection of focused Agent Skills for ChatGPT and Codex. Browse the catalog, inspect each skill’s operating contract, and jump straight to the source.</p>
+      <div class="stats" aria-live="polite">
+        <div><strong id="skill-count">—</strong><span>skills</span></div>
+        <div><strong>Apache-2.0</strong><span>license</span></div>
+        <div><strong>Open</strong><span>source</span></div>
+      </div>
+    </section>
+
+    <section class="catalog" aria-labelledby="catalog-heading">
+      <div class="catalog-head">
+        <div>
+          <p class="eyebrow">Catalog</p>
+          <h2 id="catalog-heading">Explore the collection</h2>
+        </div>
+        <label class="search">
+          <span class="sr-only">Search skills</span>
+          <input id="search" type="search" placeholder="Search skills…" autocomplete="off">
+        </label>
+      </div>
+      <div id="skill-grid" class="skill-grid" aria-live="polite"></div>
+      <p id="empty-state" class="empty" hidden>No skills match that search.</p>
+    </section>
+  </main>
+
+  <dialog id="skill-dialog" class="skill-dialog">
+    <button class="dialog-close" type="button" aria-label="Close">×</button>
+    <div id="dialog-content"></div>
+  </dialog>
+
+  <footer class="shell footer">
+    <span>Built from the repository source of truth.</span>
+    <a href="https://github.com/mattamior/agent-skills">View source ↗</a>
+  </footer>
+
+  <script type="module" src="/app.js"></script>
+  <script type="application/json" id="gallery-source">/skills.json</script>
+</body>
+</html>
