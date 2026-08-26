@@ -1,0 +1,13 @@
+{
+  "name": "agent-skills-gallery",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-site.mjs",
+    "check:site": "node scripts/verify-site.mjs",
+    "check": "npm run build && npm run check:site"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
