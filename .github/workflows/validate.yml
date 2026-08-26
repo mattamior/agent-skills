@@ -13,12 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
 
       - name: Install pinned Agent Skills validator
         run: >-
@@ -51,3 +56,6 @@ jobs:
             printf 'collision test unexpectedly succeeded\n' >&2
             exit 1
           fi
+
+      - name: Build and verify gallery
+        run: npm run check
