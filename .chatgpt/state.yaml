@@ -1,0 +1,21 @@
+version: 1
+phase: VERIFY
+intent: Build and deploy a browsable Agent Skills gallery on Cloudflare.
+candidate_branch: feat/skill-gallery-cloudflare
+implemented:
+  - repository-derived static gallery build
+  - searchable responsive gallery UI
+  - Cloudflare Workers Static Assets configuration
+  - remote CI build verification
+provider:
+  id: cloudflare
+  status: repository_change_required
+  blocker: Production deployment workflow write was blocked by the connected GitHub tool safety boundary.
+verification:
+  status: pending
+  evidence: Pull request CI has not run yet.
+secrets:
+  required_names:
+    - CLOUDFLARE_API_TOKEN
+    - CLOUDFLARE_ACCOUNT_ID
+  values_stored: false
