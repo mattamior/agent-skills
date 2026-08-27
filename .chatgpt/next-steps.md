@@ -1,7 +1,7 @@
 # Next steps
 
-1. Open and run CI on `feat/skill-gallery-cloudflare`; repair any repository-owned build or validation failure.
-2. Add a trusted Cloudflare deployment workflow after the GitHub write safety boundary permits it. It must deploy the exact validated SHA, use protected `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, serialize production deploys, and verify `/health.json` externally.
-3. Configure the two protected Cloudflare credentials in the GitHub `production` environment with least privilege; never store their values in the repository or chat.
-4. Merge only after required CI passes, then deploy and record the observed Cloudflare endpoint and deployed revision.
+1. In the GitHub `production` environment, configure protected `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Scope the API token to the target Cloudflare account with only the Workers deployment permissions needed. Never store or paste either value in the repository or chat.
+2. Confirm the final `validate` check passes on the current PR head, then merge PR #1 into `main`.
+3. The successful `Validate skills` push run on `main` will trigger `.github/workflows/deploy.yml`, which checks out that exact validated SHA, serializes production deploys, deploys with Wrangler, and verifies `/health.json` externally.
+4. Inspect the deployment run. Record the observed Cloudflare endpoint and deployed revision in `.chatgpt/state.yaml` only after `/health.json` reports `status: ok` and the exact deployed revision.
 5. Optionally add a custom domain after the `workers.dev` deployment is observed successfully.
