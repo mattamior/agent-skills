@@ -12,6 +12,8 @@ The first gallery release uses dependency-light static HTML, CSS, and browser Ja
 
 Use Cloudflare Workers Static Assets with `wrangler.jsonc`, rather than deprecated Workers Sites. Production must be delivered remotely from an immutable revision and externally observed after deployment.
 
+The canonical Worker name is `agent-skills`, giving the canonical production endpoint `https://agent-skills.mattamior.workers.dev`.
+
 ## ZeroLocal trust boundary
 
 Cloudflare credential values remain outside repository and chat. The expected protected names are `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Production deployment automation must not expose them to pull-request validation.
