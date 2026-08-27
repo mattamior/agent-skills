@@ -1,9 +1,11 @@
 version: 1
-phase: DELIVER
+phase: OBSERVE
 intent: Build and deploy a browsable Agent Skills gallery on Cloudflare.
-candidate_branch: feat/skill-gallery-cloudflare
-candidate_revision: d87731ca38c24a725f9819613e68630b6d3a6856
-pull_request: 1
+candidate_branch: main
+candidate_revision: 8bd5dfa4c8017f399e74456e33dd9a43919aa5f9
+pull_requests:
+  - 1
+  - 2
 implemented:
   - repository-derived static gallery build
   - searchable responsive gallery UI
@@ -11,26 +13,39 @@ implemented:
   - remote CI build verification
   - ZeroLocal Cloudflare provider descriptor
   - trusted production deployment workflow with exact-SHA checkout, serialized deploys, and external health verification
+  - Wrangler v4 production deployment path for assets-only Workers configuration
 provider:
   id: cloudflare
-  status: trust_boundary_required
-  blocker: Configure protected CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in the GitHub production environment before merging for production delivery.
+  status: observed
+  blocker: null
 verification:
   status: passed
-  revision: d87731ca38c24a725f9819613e68630b6d3a6856
+  revision: 8bd5dfa4c8017f399e74456e33dd9a43919aa5f9
   check: validate
   conclusion: success
-  completed_at: 2026-08-27T03:45:07Z
-  evidence: https://github.com/mattamior/agent-skills/actions/runs/33037285268/job/98402666264
+  completed_at: 2026-08-27T06:12:36Z
+  evidence: https://github.com/mattamior/agent-skills/actions/runs/33045029229/job/98426930622
 delivery:
-  status: not_started
+  status: observed
+  revision: 8bd5dfa4c8017f399e74456e33dd9a43919aa5f9
   workflow: .github/workflows/deploy.yml
+  workflow_run: https://github.com/mattamior/agent-skills/actions/runs/33045050789
+  endpoint: https://mattamior-agent-skills.mattamior.workers.dev
   verification_path: /health.json
+  health_url: https://mattamior-agent-skills.mattamior.workers.dev/health.json
+  observed_at: 2026-08-27T06:13:07Z
+  cloudflare_version_id: f5e73915-edd3-43ac-8db0-95f029132a69
+  evidence: Health check reported status ok and exact revision 8bd5dfa4c8017f399e74456e33dd9a43919aa5f9 after one transient propagation 404.
+repair:
+  initial_failed_revision: bad5f7787b7aeb2e2e792da93346ff9f39516272
+  failure_category: dependency/toolchain
+  failure: cloudflare/wrangler-action@v3 installed Wrangler 3.90.0, which rejected the assets-only configuration with Missing entry-point.
+  repaired_by: PR #2 upgraded cloudflare/wrangler-action to v4 and explicitly selected Wrangler major version 4.
 secrets:
   required_names:
     - CLOUDFLARE_API_TOKEN
     - CLOUDFLARE_ACCOUNT_ID
   values_stored_in_repository_or_chat: false
 checkpoint:
-  timestamp: 2026-08-27T11:45:30+08:00
-  reason: natural_trust_boundary
+  timestamp: 2026-08-27T14:13:30+08:00
+  reason: production_observed
