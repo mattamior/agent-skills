@@ -15,3 +15,7 @@ Use Cloudflare Workers Static Assets with `wrangler.jsonc`, rather than deprecat
 ## ZeroLocal trust boundary
 
 Cloudflare credential values remain outside repository and chat. The expected protected names are `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Production deployment automation must not expose them to pull-request validation.
+
+## Trusted deployment gate
+
+Production delivery is implemented in `.github/workflows/deploy.yml`. Automatic production deploys are triggered only by a successful `Validate skills` workflow caused by a push to `main`, then check out `workflow_run.head_sha` rather than a moving branch. Deploys use the GitHub `production` environment, are serialized with a production concurrency group, and are considered observed only when the externally fetched `/health.json` reports `status: ok` and the exact deployed revision. Manual recovery accepts only a full immutable SHA reachable from `main` and re-validates it remotely before deployment.
