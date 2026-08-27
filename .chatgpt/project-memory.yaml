@@ -1,0 +1,7 @@
+version: 1
+project: agent-skills
+canonical_repository: mattamior/agent-skills
+state_file: .chatgpt/state.yaml
+next_steps_file: .chatgpt/next-steps.md
+decisions_file: .chatgpt/decisions.md
+provider: cloudflare
