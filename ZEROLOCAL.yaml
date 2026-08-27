@@ -1,0 +1,35 @@
+version: 1
+project:
+  name: agent-skills
+  repository: mattamior/agent-skills
+zerolocal:
+  protocol: v0.1
+  profiles:
+    - rpm
+    - continuous-delivery
+provider:
+  id: cloudflare
+  runtime: workers
+  capabilities:
+    deploy: true
+    endpoint_discovery: true
+    production_verification: true
+    provisioning:
+      worker: true
+  credentials:
+    - name: CLOUDFLARE_API_TOKEN
+      store: github-environment-secret
+      environment: production
+      minimum_scope: Workers Scripts Edit for the target account
+    - name: CLOUDFLARE_ACCOUNT_ID
+      store: github-environment-secret
+      environment: production
+  delivery:
+    validation_workflow: .github/workflows/validate.yml
+    deployment_workflow: .github/workflows/deploy.yml
+    revision_source: github.event.workflow_run.head_sha
+    verification_path: /health.json
+trust_boundaries:
+  - create and scope the Cloudflare API token to the target account
+  - store CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in the GitHub production environment
+  - approve account-level or domain changes when required
