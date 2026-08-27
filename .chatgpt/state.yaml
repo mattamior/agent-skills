@@ -2,10 +2,11 @@ version: 1
 phase: OBSERVE
 intent: Build and deploy a browsable Agent Skills gallery on Cloudflare.
 candidate_branch: main
-candidate_revision: 8bd5dfa4c8017f399e74456e33dd9a43919aa5f9
+candidate_revision: b72b103fa1aeebe0f733b8f4ed57ce01f0385ce4
 pull_requests:
   - 1
   - 2
+  - 3
 implemented:
   - repository-derived static gallery build
   - searchable responsive gallery UI
@@ -14,38 +15,46 @@ implemented:
   - ZeroLocal Cloudflare provider descriptor
   - trusted production deployment workflow with exact-SHA checkout, serialized deploys, and external health verification
   - Wrangler v4 production deployment path for assets-only Workers configuration
+  - canonical Worker name agent-skills for concise workers.dev endpoint
 provider:
   id: cloudflare
   status: observed
   blocker: null
 verification:
   status: passed
-  revision: 8bd5dfa4c8017f399e74456e33dd9a43919aa5f9
+  revision: b72b103fa1aeebe0f733b8f4ed57ce01f0385ce4
   check: validate
   conclusion: success
-  completed_at: 2026-08-27T06:12:36Z
-  evidence: https://github.com/mattamior/agent-skills/actions/runs/33045029229/job/98426930622
+  completed_at: 2026-08-27T06:48:31Z
+  evidence: https://github.com/mattamior/agent-skills/actions/runs/33047199204/job/98433875810
 delivery:
   status: observed
-  revision: 8bd5dfa4c8017f399e74456e33dd9a43919aa5f9
+  revision: b72b103fa1aeebe0f733b8f4ed57ce01f0385ce4
   workflow: .github/workflows/deploy.yml
-  workflow_run: https://github.com/mattamior/agent-skills/actions/runs/33045050789
-  endpoint: https://mattamior-agent-skills.mattamior.workers.dev
+  workflow_run: https://github.com/mattamior/agent-skills/actions/runs/33047220371
+  endpoint: https://agent-skills.mattamior.workers.dev
   verification_path: /health.json
-  health_url: https://mattamior-agent-skills.mattamior.workers.dev/health.json
-  observed_at: 2026-08-27T06:13:07Z
-  cloudflare_version_id: f5e73915-edd3-43ac-8db0-95f029132a69
-  evidence: Health check reported status ok and exact revision 8bd5dfa4c8017f399e74456e33dd9a43919aa5f9 after one transient propagation 404.
+  health_url: https://agent-skills.mattamior.workers.dev/health.json
+  observed_at: 2026-08-27T06:48:57Z
+  cloudflare_version_id: ee7658f6-6abd-4c0d-a186-1e16d768f738
+  evidence: Health check reported status ok and exact revision b72b103fa1aeebe0f733b8f4ed57ce01f0385ce4 after one transient propagation 404.
+  legacy_endpoint: https://mattamior-agent-skills.mattamior.workers.dev
+  legacy_endpoint_deleted: false
 repair:
   initial_failed_revision: bad5f7787b7aeb2e2e792da93346ff9f39516272
   failure_category: dependency/toolchain
   failure: cloudflare/wrangler-action@v3 installed Wrangler 3.90.0, which rejected the assets-only configuration with Missing entry-point.
   repaired_by: PR #2 upgraded cloudflare/wrangler-action to v4 and explicitly selected Wrangler major version 4.
+rename:
+  pull_request: 3
+  previous_worker_name: mattamior-agent-skills
+  current_worker_name: agent-skills
+  result: deployed_and_observed
 secrets:
   required_names:
     - CLOUDFLARE_API_TOKEN
     - CLOUDFLARE_ACCOUNT_ID
   values_stored_in_repository_or_chat: false
 checkpoint:
-  timestamp: 2026-08-27T14:13:30+08:00
-  reason: production_observed
+  timestamp: 2026-08-27T06:48:57Z
+  reason: production_endpoint_renamed_and_observed
