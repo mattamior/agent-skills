@@ -1,7 +1,7 @@
 version: 1
 project:
-  name: agent-skills
-  repository: mattamior/agent-skills
+  name: skills-hub
+  repository: mattamior/skills-hub
 zerolocal:
   protocol: v0.1
   profiles:

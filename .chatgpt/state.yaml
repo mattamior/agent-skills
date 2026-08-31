@@ -21,7 +21,7 @@ verification:
   check: validate
   conclusion: success
   completed_at: 2026-08-27T03:45:07Z
-  evidence: https://github.com/mattamior/agent-skills/actions/runs/33037285268/job/98402666264
+  evidence: https://github.com/mattamior/skills-hub/actions/runs/33037285268/job/98402666264
 delivery:
   status: not_started
   workflow: .github/workflows/deploy.yml

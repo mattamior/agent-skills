@@ -13,8 +13,8 @@
 Codex 会从用户级 `$HOME/.agents/skills` 目录发现 skills，本仓库使用符号链接保持已安装版本与源码一致：
 
 ```bash
-git clone https://github.com/mattamior/agent-skills.git
-cd agent-skills
+git clone https://github.com/mattamior/skills-hub.git
+cd skills-hub
 ./scripts/link-skills.sh --check brand-design-system
 ./scripts/link-skills.sh brand-design-system
 ```

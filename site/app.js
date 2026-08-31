@@ -85,7 +85,7 @@ const { skills } = await response.json();
 count.textContent = skills.length;
 
 function openSkill(skill) {
-  const sourceUrl = `https://github.com/mattamior/agent-skills/blob/main/${skill.source}`;
+  const sourceUrl = `https://github.com/mattamior/skills-hub/blob/main/${skill.source}`;
   dialogContent.innerHTML = `
     <article class="dialog-body">
       <p class="eyebrow">${escapeHtml(skill.slug)}</p>

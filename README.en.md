@@ -13,8 +13,8 @@ This is `mattamior`'s collection for developing and maintaining reusable Agent S
 Codex discovers user-level skills from `$HOME/.agents/skills`. This repository uses symbolic links so installed skills stay aligned with their source:
 
 ```bash
-git clone https://github.com/mattamior/agent-skills.git
-cd agent-skills
+git clone https://github.com/mattamior/skills-hub.git
+cd skills-hub
 ./scripts/link-skills.sh --check brand-design-system
 ./scripts/link-skills.sh brand-design-system
 ```
