@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "agent-skills",
+  "name": "skills-hub",
   "compatibility_date": "2026-08-27",
   "assets": {
     "directory": "./dist"

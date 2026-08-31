@@ -2,6 +2,8 @@
 
 This is `mattamior`'s collection for developing and maintaining reusable Agent Skills for ChatGPT and Codex. Each skill lives independently under `skills/<skill-name>/` and uses `SKILL.md` as its entry point.
 
+Public gallery: [skills-hub.mattamior.workers.dev](https://skills-hub.mattamior.workers.dev/)
+
 ## Skills
 
 | Skill | Purpose |
