@@ -21,3 +21,7 @@
 - 每次修改后运行 `./scripts/validate-skills.py`。
 - 新增或大幅修改 skill 时，同时运行系统 `skill-creator` 的 `quick_validate.py` 与 Agent Skills `skills-ref`。
 - 修改安装脚本后验证检查模式、首次安装、重复安装和冲突拒绝。
+
+## Agnir
+
+- Before Project work, follow `README.md` → `## Agnir Project Instructions` for the canonical Agnir activation instructions.

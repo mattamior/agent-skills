@@ -1,0 +1,14 @@
+agnir:
+  version: "0.1"
+  discovery_profile: "repository-filesystem/0.1"
+project:
+  identity: "urn:github:mattamior:skills-hub"
+memory:
+  state: ".agnir/state.md"
+  next_actions: ".agnir/next-actions.md"
+  decisions: ".agnir/decisions.md"
+  evidence: ".agnir/evidence/"
+extensions:
+  agnir/repository:
+    canonical: "mattamior/skills-hub"
+    authoritative_ref: "main"
