@@ -123,23 +123,14 @@ jobs:
         if: steps.pages.outcome != 'success'
         id: fallback_worker
         shell: bash
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           set -euo pipefail
-          WORKER_API="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/skills-hub"
-          status="$(curl --silent --show-error --output worker.json --write-out '%{http_code}' \
-            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" "$WORKER_API")"
-          if [ "$status" = "200" ]; then
+          WORKER_HEALTH_URL="https://skills-hub.mattamior.workers.dev/health.json"
+          if curl --fail --silent --show-error --connect-timeout 10 --max-time 20 "$WORKER_HEALTH_URL" >/dev/null; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             echo "Pages is unavailable; keeping the existing Worker current."
-          elif [ "$status" = "404" ]; then
-            echo "Pages is unavailable and the retired Worker is absent; refusing to recreate it." >&2
-            exit 1
           else
-            cat worker.json >&2
-            echo "Unable to inspect fallback Worker (HTTP $status)" >&2
+            echo "Pages is unavailable and the retired Worker health endpoint is absent; refusing to recreate it." >&2
             exit 1
           fi
 
@@ -282,7 +273,7 @@ jobs:
             --header "$AUTH" "$WORKER_API")"
           if [ "$status" = "404" ]; then
             echo "Worker ${WORKER_NAME} is already absent."
-          elif [ "$status" = "200" ]; then
+          elif [ "$status" = "200" ] || [ "$status" = "204" ]; then
             curl --fail --silent --show-error \
               --request DELETE \
               --header "$AUTH" \
