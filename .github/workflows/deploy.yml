@@ -80,41 +80,168 @@ jobs:
           DEPLOY_REVISION: ${{ steps.revision.outputs.sha }}
         run: npm run check
 
-      - name: Deploy exact revision
+      - name: Ensure Cloudflare Pages project
+        id: pages
+        shell: bash
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          PROJECT_NAME="skills-hub"
+          PROJECT_API="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${PROJECT_NAME}"
+          AUTH="Authorization: Bearer ${CLOUDFLARE_API_TOKEN}"
+
+          status="$(curl --silent --show-error --output project.json --write-out '%{http_code}' \
+            --header "$AUTH" "$PROJECT_API")"
+          if [ "$status" = "404" ]; then
+            curl --fail --silent --show-error \
+              --request POST \
+              --header "$AUTH" \
+              --header 'Content-Type: application/json' \
+              --data "{\"name\":\"${PROJECT_NAME}\",\"production_branch\":\"main\"}" \
+              "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects" \
+              > project.json
+          elif [ "$status" != "200" ]; then
+            cat project.json >&2
+            echo "Unable to read Cloudflare Pages project (HTTP $status)" >&2
+            exit 1
+          fi
+
+          jq -e '.success == true and .result.name == "skills-hub"' project.json >/dev/null
+          subdomain="$(jq -r '.result.subdomain // empty' project.json)"
+          if [ -z "$subdomain" ]; then
+            echo "Cloudflare Pages project did not expose a subdomain" >&2
+            exit 1
+          fi
+          echo "project_name=${PROJECT_NAME}" >> "$GITHUB_OUTPUT"
+          echo "production_url=https://${subdomain}" >> "$GITHUB_OUTPUT"
+          echo "Pages production URL: https://${subdomain}"
+
+      - name: Deploy exact revision to Cloudflare Pages
         id: deploy
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: "4"
-          command: deploy
+          command: >-
+            pages deploy dist
+            --project-name=${{ steps.pages.outputs.project_name }}
+            --branch=main
+            --commit-hash=${{ steps.revision.outputs.sha }}
 
-      - name: Verify production health
+      - name: Accept Cloudflare Pages production deployment
+        id: acceptance
         shell: bash
         env:
-          RAW_DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          PROJECT_NAME: ${{ steps.pages.outputs.project_name }}
+          PRODUCTION_URL: ${{ steps.pages.outputs.production_url }}
           REVISION: ${{ steps.revision.outputs.sha }}
         run: |
           set -euo pipefail
-          HOST="$(printf '%s' "$RAW_DEPLOYMENT_URL" | awk '{print $1}')"
-          if [ -z "$HOST" ]; then
-            echo "Cloudflare deployment did not expose a deployment URL" >&2
+          PROJECT_API="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${PROJECT_NAME}"
+          AUTH="Authorization: Bearer ${CLOUDFLARE_API_TOKEN}"
+
+          deployment_url=""
+          for attempt in 1 2 3 4 5 6 7 8; do
+            curl --fail --silent --show-error --header "$AUTH" "$PROJECT_API" > project.json
+            observed_revision="$(jq -r '.result.canonical_deployment.deployment_trigger.metadata.commit_hash // empty' project.json)"
+            if [ "${observed_revision,,}" = "$REVISION" ]; then
+              deployment_url="$(jq -r '.result.canonical_deployment.url // empty' project.json)"
+              break
+            fi
+            if [ "$attempt" -lt 8 ]; then sleep 2; fi
+          done
+
+          if [ -z "$deployment_url" ]; then
+            echo "Pages canonical deployment did not converge to revision $REVISION" >&2
+            cat project.json >&2
             exit 1
           fi
-          case "$HOST" in
-            http://*|https://*) URL="$HOST" ;;
-            *) URL="https://$HOST" ;;
-          esac
-          HEALTH_URL="${URL%/}/health.json"
-          for attempt in 1 2 3 4 5 6; do
-            if BODY="$(curl --fail --silent --show-error --connect-timeout 10 --max-time 20 "$HEALTH_URL")" &&
-               printf '%s' "$BODY" | jq -e --arg revision "$REVISION" '.status == "ok" and .revision == $revision' >/dev/null; then
-              echo "Observed revision $REVISION at $HEALTH_URL"
-              exit 0
+
+          validate_site() {
+            local base="${1%/}"
+            local label="$2"
+            local health remote_skills
+            health="$(curl --fail --silent --show-error --connect-timeout 10 --max-time 20 "${base}/health.json")"
+            printf '%s' "$health" | jq -e --arg revision "$REVISION" \
+              '.status == "ok" and .revision == $revision and .skills >= 2' >/dev/null
+            curl --fail --silent --show-error --connect-timeout 10 --max-time 20 "${base}/" \
+              | grep -F 'Agent Skills' >/dev/null
+            remote_skills="$(mktemp)"
+            curl --fail --silent --show-error --connect-timeout 10 --max-time 20 "${base}/skills.json" \
+              | jq -S . > "$remote_skills"
+            jq -S . dist/skills.json > local-skills.json
+            diff -u local-skills.json "$remote_skills"
+            jq -e '.skills | map(.slug) | index("brand-design-system") != null' "$remote_skills" >/dev/null
+            jq -e '.skills | map(.slug) | index("pet-avatar-generation") != null' "$remote_skills" >/dev/null
+            echo "Accepted ${label}: ${base}"
+          }
+
+          validate_site "$deployment_url" "immutable Pages deployment"
+
+          for attempt in 1 2 3 4 5 6 7 8; do
+            if validate_site "$PRODUCTION_URL" "Pages production URL"; then
+              break
             fi
-            if [ "$attempt" -lt 6 ]; then
-              sleep 2
+            if [ "$attempt" -eq 8 ]; then
+              echo "Pages production URL did not pass acceptance" >&2
+              exit 1
             fi
+            sleep 2
           done
-          echo "Production health verification failed for $HEALTH_URL" >&2
-          exit 1
+
+          echo "deployment_url=${deployment_url%/}" >> "$GITHUB_OUTPUT"
+          echo "production_url=${PRODUCTION_URL%/}" >> "$GITHUB_OUTPUT"
+
+      - name: Remove superseded Worker after Pages acceptance
+        id: retire_worker
+        shell: bash
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          WORKER_NAME="skills-hub"
+          WORKER_API="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}"
+          AUTH="Authorization: Bearer ${CLOUDFLARE_API_TOKEN}"
+
+          status="$(curl --silent --show-error --output worker.json --write-out '%{http_code}' \
+            --header "$AUTH" "$WORKER_API")"
+          if [ "$status" = "404" ]; then
+            echo "Worker ${WORKER_NAME} is already absent."
+          elif [ "$status" = "200" ]; then
+            curl --fail --silent --show-error \
+              --request DELETE \
+              --header "$AUTH" \
+              "${WORKER_API}?force=true" >/dev/null
+            echo "Deleted superseded Worker ${WORKER_NAME}."
+          else
+            cat worker.json >&2
+            echo "Unable to inspect Worker before retirement (HTTP $status)" >&2
+            exit 1
+          fi
+
+          verify_status="$(curl --silent --show-error --output worker-after.json --write-out '%{http_code}' \
+            --header "$AUTH" "$WORKER_API")"
+          if [ "$verify_status" != "404" ]; then
+            cat worker-after.json >&2
+            echo "Worker retirement verification failed (HTTP $verify_status)" >&2
+            exit 1
+          fi
+          echo "Worker retirement verified."
+
+      - name: Verify Pages after Worker retirement
+        shell: bash
+        env:
+          PRODUCTION_URL: ${{ steps.acceptance.outputs.production_url }}
+          REVISION: ${{ steps.revision.outputs.sha }}
+        run: |
+          set -euo pipefail
+          health="$(curl --fail --silent --show-error --connect-timeout 10 --max-time 20 "${PRODUCTION_URL%/}/health.json")"
+          printf '%s' "$health" | jq -e --arg revision "$REVISION" \
+            '.status == "ok" and .revision == $revision and .skills >= 2' >/dev/null
+          echo "Pages remained healthy after Worker retirement: ${PRODUCTION_URL%/}"
