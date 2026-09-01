@@ -9,6 +9,7 @@
 | Skill | 用途 |
 | --- | --- |
 | [`brand-design-system`](skills/brand-design-system/SKILL.md) | 从品牌探索、过程留档和母版确认推进到生产资产、网站接入与视觉验收。 |
+| [`pet-avatar-generation`](skills/pet-avatar-generation/SKILL.md) | 将真实宠物照片转成保持辨识度的风格化头像，探索明显不同的视觉方向，并精修选中的方案，包括透明背景输出。 |
 
 ## 安装
 
@@ -19,19 +20,24 @@ git clone https://github.com/mattamior/skills-hub.git
 cd skills-hub
 ./scripts/link-skills.sh --check brand-design-system
 ./scripts/link-skills.sh brand-design-system
+./scripts/link-skills.sh pet-avatar-generation
 ```
 
 无参数时，脚本会处理仓库中的全部 skills。可使用 `--target DIR` 指定其他安装目录。脚本不会覆盖已有文件或指向其他位置的符号链接。
 
 ## 使用
 
-安装到用户级 `$HOME/.agents/skills` 后，无需将 skill 复制到其他仓库。在任意 Codex 项目中，在请求开头显式调用：
+安装到用户级 `$HOME/.agents/skills` 后，无需将 skill 复制到其他仓库。在任意 Codex 项目中，在请求开头显式调用所需 skill：
 
 ```text
 $brand-design-system 审查这个项目现有的 Logo、favicon 和 PWA 图标，先做只读检查并报告证据、缺口和待决策项。
 ```
 
-Codex CLI 或 IDE 扩展中也可先运行 `/skills` 确认已发现该 skill，再输入 `$` 选择它。在 ChatGPT 桌面版中，从 Skills 选择器选择 **Brand Design System**。当任务匹配品牌识别、Logo 系统、生产级品牌资产或品牌实施审查时，ChatGPT 或 Codex 也可自动选择它。
+```text
+$pet-avatar-generation 把源图里的宠物做成三个明显不同的头像风格，同时保留它的花纹和辨识特征。
+```
+
+Codex CLI 或 IDE 扩展中也可先运行 `/skills` 确认已发现 skills，再输入 `$` 选择。在 ChatGPT 桌面版中，从 Skills 选择器选择对应 skill。当请求与某个 skill 的描述匹配时，ChatGPT 或 Codex 也可能自动选择它。
 
 ## 开发与验证
 
@@ -48,7 +54,7 @@ Codex CLI 或 IDE 扩展中也可先运行 `/skills` 确认已发现该 skill，
 
 GitHub Actions 还会用固定版本的 Agent Skills `skills-ref` 检查规范兼容性，并验证安装脚本的检查、安装、幂等与冲突拒绝路径。
 
-当 skill 的路由发生实质变化时，复核 [`tests/brand-design-system-trigger-cases.md`](tests/brand-design-system-trigger-cases.md) 中的场景。
+当 skill 的路由发生实质变化时，复核 `tests/*-trigger-cases.md` 下对应的场景。
 
 正式用户文档保持 `README.zh.md` 与 `README.en.md` 同步。首版只分发独立 skills，不打包 plugin，也不发布 GitHub Release。
 

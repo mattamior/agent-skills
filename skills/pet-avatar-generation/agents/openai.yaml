@@ -1,0 +1,8 @@
+interface:
+  display_name: "Pet Avatar Generation"
+  short_description: "Turn pet photos into faithful stylized avatars"
+  brand_color: "#F59E0B"
+  default_prompt: "Use $pet-avatar-generation to turn my pet photo into a recognizable stylized avatar."
+
+policy:
+  allow_implicit_invocation: true
