@@ -25,7 +25,13 @@ cd skills-hub
 
 ## 使用
 
-可显式调用 `$brand-design-system`，也可让 ChatGPT 或 Codex 在品牌识别、Logo 系统、生产级品牌资产或品牌实施审查任务中自动选择它。
+安装到用户级 `$HOME/.agents/skills` 后，无需将 skill 复制到其他仓库。在任意 Codex 项目中，在请求开头显式调用：
+
+```text
+$brand-design-system 审查这个项目现有的 Logo、favicon 和 PWA 图标，先做只读检查并报告证据、缺口和待决策项。
+```
+
+Codex CLI 或 IDE 扩展中也可先运行 `/skills` 确认已发现该 skill，再输入 `$` 选择它。在 ChatGPT 桌面版中，从 Skills 选择器选择 **Brand Design System**。当任务匹配品牌识别、Logo 系统、生产级品牌资产或品牌实施审查时，ChatGPT 或 Codex 也可自动选择它。
 
 ## 开发与验证
 

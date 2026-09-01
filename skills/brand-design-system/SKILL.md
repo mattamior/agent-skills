@@ -7,6 +7,14 @@ description: Create, refine, document, package, or review a brand identity from 
 
 Create a brand identity that remains traceable and faithful from the initial evidence through the approved production assets. Treat source material and approved artwork—not verbal recollection—as the source of truth.
 
+## Invoke the skill
+
+In Codex, invoke the skill from any repository by starting the request with `$brand-design-system`; a user-scoped installation does not need to be copied into each project. In ChatGPT desktop, select **Brand Design System** from the Skills picker. Both products may also select it automatically when the request matches the skill description.
+
+```text
+$brand-design-system audit this project's existing logo, favicon, and PWA assets. Start read-only and report evidence, gaps, and required decisions.
+```
+
 ## Establish the assignment
 
 Determine whether the request is exploration, refinement, historical reconstruction, production, integration, or review. Inspect existing assets, implementation, repository history, and prior records before asking questions they can answer.

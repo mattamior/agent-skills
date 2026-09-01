@@ -25,7 +25,13 @@ With no skill arguments, the script processes every skill in the repository. Use
 
 ## Use
 
-Invoke `$brand-design-system` explicitly, or let ChatGPT or Codex select it for brand identity, logo-system, production brand-asset, or brand implementation review work.
+After installing it in the user-level `$HOME/.agents/skills` directory, you do not need to copy the skill into other repositories. Invoke it explicitly at the start of a request in any Codex project:
+
+```text
+$brand-design-system audit this project's existing logo, favicon, and PWA assets. Start read-only and report evidence, gaps, and required decisions.
+```
+
+In Codex CLI or the IDE extension, you can also run `/skills` to confirm discovery and then type `$` to select it. In ChatGPT desktop, select **Brand Design System** from the Skills picker. ChatGPT or Codex may also select it automatically for brand identity, logo-system, production brand-asset, or brand implementation review work.
 
 ## Develop and validate
 
