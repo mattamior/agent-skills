@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A browsable collection of reusable Agent Skills for ChatGPT and Codex.">
+  <meta name="description" content="A browsable catalog of reusable Agent Skills for ChatGPT and Codex, with install and invocation guidance.">
   <title>Agent Skills — mattamior</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
@@ -11,6 +11,8 @@
   <header class="shell topbar">
     <a class="wordmark" href="/" aria-label="Agent Skills home">Agent Skills<span>.</span></a>
     <nav aria-label="Primary navigation">
+      <a href="#catalog">Catalog</a>
+      <a href="#usage">How to use</a>
       <a href="https://github.com/mattamior/skills-hub">GitHub ↗</a>
     </nav>
   </header>
@@ -19,15 +21,19 @@
     <section class="hero">
       <p class="eyebrow">mattamior / skills-hub</p>
       <h1>Reusable skills for<br><em>serious agent work.</em></h1>
-      <p class="lede">A repository-first collection of focused Agent Skills for ChatGPT and Codex. Browse the catalog, inspect each skill’s operating contract, and jump straight to the source.</p>
+      <p class="lede">A repository-first catalog of focused Agent Skills for ChatGPT and Codex. Compare the collection, open a dedicated skill page, copy the install command, and start with a ready-to-use invocation.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#catalog">Browse skills</a>
+        <a class="button" href="#usage">How to use</a>
+      </div>
       <div class="stats" aria-live="polite">
         <div><strong id="skill-count">—</strong><span>skills</span></div>
         <div><strong>Apache-2.0</strong><span>license</span></div>
-        <div><strong>Open</strong><span>source</span></div>
+        <div><strong>Repository-first</strong><span>source of truth</span></div>
       </div>
     </section>
 
-    <section class="catalog" aria-labelledby="catalog-heading">
+    <section id="catalog" class="catalog" aria-labelledby="catalog-heading">
       <div class="catalog-head">
         <div>
           <p class="eyebrow">Catalog</p>
@@ -41,12 +47,32 @@
       <div id="skill-grid" class="skill-grid" aria-live="polite"></div>
       <p id="empty-state" class="empty" hidden>No skills match that search.</p>
     </section>
-  </main>
 
-  <dialog id="skill-dialog" class="skill-dialog">
-    <button class="dialog-close" type="button" aria-label="Close">×</button>
-    <div id="dialog-content"></div>
-  </dialog>
+    <section id="usage" class="usage" aria-labelledby="usage-heading">
+      <div class="section-intro">
+        <p class="eyebrow">Use a skill</p>
+        <h2 id="usage-heading">From discovery to invocation</h2>
+        <p>Each detail page is generated from the skill itself, so the catalog stays aligned with the repository instead of maintaining a second manual description.</p>
+      </div>
+      <div class="usage-steps">
+        <article>
+          <span>01</span>
+          <h3>Choose a skill</h3>
+          <p>Open a catalog entry to review its scope, trigger contract, source instructions, and ready-to-use prompt.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Install for Codex</h3>
+          <p>Copy the skill-specific <code>link-skills.sh</code> command. A user-level install makes the skill available across Codex projects.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Invoke it</h3>
+          <p>Start a Codex request with <code>$skill-name</code>, or select the matching skill in ChatGPT when the Skills picker is available.</p>
+        </article>
+      </div>
+    </section>
+  </main>
 
   <footer class="shell footer">
     <span>Built from the repository source of truth.</span>
