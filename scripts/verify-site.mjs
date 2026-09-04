@@ -23,6 +23,7 @@ for (const skill of data.skills) {
 }
 if (health.status !== "ok" || health.skills !== data.skills.length) throw new Error("Health metadata does not match gallery data");
 if (!html.includes("Agent Skills") || !html.includes("skills.json") || !html.includes('id="usage"')) throw new Error("Gallery shell is missing required content hooks");
+if (!html.includes('<link rel="canonical" href="https://skills-hub.hkooii.com/">')) throw new Error("Gallery canonical URL is missing or stale");
 if (!app.includes("/skills/") || !app.includes("shortDescription")) throw new Error("Catalog cards are not wired to skill detail pages");
 
 console.log(`Verified catalog output for ${data.skills.length} skill(s), including dedicated detail pages.`);

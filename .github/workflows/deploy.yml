@@ -138,6 +138,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           PROJECT_NAME: ${{ steps.pages.outputs.project_name }}
           PRODUCTION_URL: ${{ steps.pages.outputs.production_url }}
+          PUBLIC_URL: https://skills-hub.hkooii.com
           REVISION: ${{ steps.revision.outputs.sha }}
         run: |
           set -euo pipefail
@@ -194,4 +195,5 @@ jobs:
 
           retry_validate_site "$deployment_url" "immutable Pages deployment"
           retry_validate_site "$PRODUCTION_URL" "Pages production URL"
-          echo "Cloudflare Pages production accepted: ${PRODUCTION_URL%/}"
+          retry_validate_site "$PUBLIC_URL" "canonical custom domain"
+          echo "Cloudflare Pages production accepted: ${PUBLIC_URL%/}"
